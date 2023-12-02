@@ -29,20 +29,13 @@ public class TradeMapper extends Mapper<LongWritable, Text, Text, Text> {
             // 判断是否为平安银行
             if ("000001".equals(securityID)) {
                 // 提取所需字段，拼接为输出值
-                String output = fields[8] + "," + fields[10] + "," + fields[11] + "," +
-                        fields[12] + "," + fields[13] + "," + fields[14] + "," + fields[15];
+                String output = fields[8] + "\t" + fields[10] + "\t" + fields[11] + "\t" +
+                        fields[12] + "\t" + fields[13] + "\t" + fields[14] + "\t" + fields[15];
 
                 // 设置输出键值对
                 outputKey.set(securityID);
-
-                // 根据成交类别分发到不同的Reducer
-                if ("4".equals(execType)) {
-                    // 撤单
-                    context.write(new Text("cancle"), new Text(output));
-                } else if ("F".equals(execType)) {
-                    // 成交
-                    context.write(new Text("traded"), new Text(output));
-                }
+                outputValue.set(output);
+                context.write(outputKey, outputValue);
             }
         }
     }

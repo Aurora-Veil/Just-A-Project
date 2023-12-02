@@ -16,7 +16,7 @@ public class MultipleTradedReducer extends Reducer<Text, Text, Text, Text> {
     protected void reduce(Text key, Iterable<Text> values, Context context)
             throws IOException, InterruptedException {
         for (Text value : values) {
-            String execType = value.toString().split(",")[5];
+            String execType = value.toString().split("\t")[5];
             if ("F".equals(execType)) {
                 multipleOutputs.write("Traded", key, new Text("1")); // "1" 表示成交记录
             } else {
