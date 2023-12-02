@@ -6,7 +6,7 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
-import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.MultipleOutputs;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
@@ -28,8 +28,8 @@ public class OrderDriver {
         job.setOutputValueClass(Text.class);
 
         // 设置输入路径，可以设置多个输入路径
-        FileInputFormat.addInputPath(job, new Path(args[0]));
-        FileInputFormat.addInputPath(job, new Path(args[1]));
+        TextInputFormat.addInputPath(job, new Path(args[0]));
+        TextInputFormat.addInputPath(job, new Path(args[1]));
 
         // 设置输出路径
         FileOutputFormat.setOutputPath(job, new Path(args[2]));

@@ -30,8 +30,8 @@ public class TradeDriver {
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(Text.class);
 
-        FileInputFormat.addInputPath(job, new Path(args[0]));
-        FileInputFormat.addInputPath(job, new Path(args[1]));
+        TextInputFormat.addInputPath(job, new Path(args[0]));
+        TextInputFormat.addInputPath(job, new Path(args[1]));
 
         // 设置输出路径
         FileOutputFormat.setOutputPath(job, new Path(args[2]));
