@@ -23,7 +23,11 @@ public class OrderDriver {
         job.setMapperClass(OrderMapper.class);
         job.setReducerClass(OrderReducer.class);
 
-        // 设置输出的 key 和 value 类型
+        // 指定Map阶段的输出键值对类型
+        job.setMapOutputKeyClass(Text.class);
+        job.setMapOutputValueClass(Text.class);
+
+        // 指定Reducer阶段的输出键值对类型
         job.setOutputKeyClass(NullWritable.class);
         job.setOutputValueClass(Text.class);
 
