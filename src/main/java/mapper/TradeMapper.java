@@ -22,7 +22,7 @@ public class TradeMapper extends Mapper<LongWritable, Text, Text, Text> {
         String tradeTime = fields[15];
 
         // 获取成交类别
-        String execType = fields[19];
+        String execType = fields[14];
 
         // 过滤连续竞价时间段
         if (!isContinuousAuctionTime(tradeTime)) {
