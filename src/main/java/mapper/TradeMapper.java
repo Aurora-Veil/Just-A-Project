@@ -20,23 +20,28 @@ public class TradeMapper extends Mapper<LongWritable, Text, Text, Text> {
 
         // 获取成交时间
         String tradeTime = fields[15];
+        //买方委托索引
+        String bidApplSeqNum = fields[10];
+        //卖方委托索引
+        String offerApplSeqNum = fields[11];
 
         // 获取成交类别
         String execType = fields[14];
+        String outputKeyString = bidApplSeqNum + "," + offerApplSeqNum;
 
         // 过滤连续竞价时间段
-        if (!isContinuousAuctionTime(tradeTime)) {
+        if (!isContinuousAuctionTime(tradeTime)&&"000001".equals(securityID)){
             // 判断是否为平安银行
-            if ("000001".equals(securityID)) {
+
                 // 提取所需字段，拼接为输出值
                 String output = fields[8] + "\t" + fields[10] + "\t" + fields[11] + "\t" +
                         fields[12] + "\t" + fields[13] + "\t" + fields[14] + "\t" + fields[15];
 
                 // 设置输出键值对
-                outputKey.set(securityID);
+            outputKey.set(outputKeyString);
                 outputValue.set(output);
                 context.write(outputKey, outputValue);
-            }
+
         }
     }
 

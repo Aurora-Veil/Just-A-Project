@@ -1,12 +1,14 @@
 package reducer;
 
 import java.io.IOException;
+
+import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.output.MultipleOutputs;
 
-public class TradedReducer extends Reducer<Text, Text, Text, Text> {
-    private MultipleOutputs<Text, Text> multipleOutputs;
+public class TradedReducer extends Reducer<Text, Text, NullWritable, Text> {
+    private MultipleOutputs<NullWritable, Text> multipleOutputs;
 
     @Override
     protected void setup(Context context) {
@@ -18,9 +20,11 @@ public class TradedReducer extends Reducer<Text, Text, Text, Text> {
         for (Text value : values) {
             String execType = value.toString().split("\t")[5];
             if ("F".equals(execType)) {
-                multipleOutputs.write("Traded", key, new Text("1")); // "1" 表示成交记录
+                multipleOutputs.write("Traded", NullWritable.get(), new Text("F")); // "1" 表示成交记录
+            break;
             } else {
-                multipleOutputs.write("Canceled", key, new Text("0")); // "0" 表示撤单记录
+                multipleOutputs.write("Canceled", NullWritable.get(), new Text("4")); // "0" 表示撤单记录
+            break;
             }
         }
     }
