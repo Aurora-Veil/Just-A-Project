@@ -25,8 +25,6 @@ public class TradeMapper extends Mapper<LongWritable, Text, Text, Text> {
         //卖方委托索引
         String offerApplSeqNum = fields[11];
 
-        // 获取成交类别
-        String execType = fields[14];
         String outputKeyString = bidApplSeqNum + "," + offerApplSeqNum;
 
         // 过滤连续竞价时间段
