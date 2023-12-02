@@ -8,7 +8,7 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.MultipleOutputs;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
-import reducer.MultipleTradedReducer;
+import reducer.TradedReducer;
 
 public class TradeDriver {
 
@@ -22,7 +22,7 @@ public class TradeDriver {
 
         // 设置Mapper和Reducer类
         job.setMapperClass(TradeMapper.class);
-        job.setReducerClass(MultipleTradedReducer.class);
+        job.setReducerClass(TradedReducer.class);
 
         // 设置输出键值对类
         job.setOutputKeyClass(Text.class);
