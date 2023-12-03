@@ -3,12 +3,13 @@ package reducer;
 import java.io.IOException;
 
 import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.output.MultipleOutputs;
 
-public class TradedReducer extends Reducer<IntWritable, Text, NullWritable, Text> {
+public class TradedReducer extends Reducer<LongWritable, Text, NullWritable, Text> {
     private MultipleOutputs<NullWritable, Text> multipleOutputs;
 
     @Override
@@ -17,7 +18,7 @@ public class TradedReducer extends Reducer<IntWritable, Text, NullWritable, Text
     }
 
     @Override
-    protected void reduce(IntWritable key, Iterable<Text> values, Context context)
+    protected void reduce(LongWritable key, Iterable<Text> values, Context context)
             throws IOException, InterruptedException {
         for (Text value : values) {
             String execType = value.toString().split("\t")[7];

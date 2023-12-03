@@ -7,8 +7,8 @@ import org.apache.hadoop.mapreduce.Mapper;
 
 import java.io.IOException;
 
-public class OrderMapper extends Mapper<LongWritable, Text, IntWritable, Text> {
-    private IntWritable outputKey = new IntWritable();
+public class OrderMapper extends Mapper<LongWritable, Text, LongWritable, Text> {
+    private LongWritable outputKey = new LongWritable();
     private Text outputValue = new Text();
 
     @Override
@@ -20,16 +20,16 @@ public class OrderMapper extends Mapper<LongWritable, Text, IntWritable, Text> {
         String orderType = records[14];
 
         if (id.equals("000001") && isInContinuousTrading(time)){
-            outputKey.set(Integer.parseInt(time));
+            long timeForHour = Long.parseLong(time.substring(time.length() - 9));
+            outputKey.set(timeForHour);
+            String orderRecord;
             if (orderType.equals("2")){
-                String orderRecord = records[12] + "\t" + records[10] + "\t" + records[11] + "\t" + records[13] + "\t"
+                orderRecord = records[12] + "\t" + records[10] + "\t" + records[11] + "\t" + records[13] + "\t"
                         + records[14] + "\t" + records[7] + "\t" + "NULL" + "\t" + "NULL";
             } else{
-                String orderRecord = records[12] + "\t" + "NULL" + "\t" + records[11] + "\t" + records[13] + "\t"
+                orderRecord = records[12] + "\t" + "NULL" + "\t" + records[11] + "\t" + records[13] + "\t"
                         + records[14] + "\t" + records[7] + "\t" + "NULL" + "\t" + "NULL";
             }
-            String orderRecord = records[12] + "\t" + records[10] + "\t" + records[11] + "\t" + records[13] + "\t"
-                    + records[14] + "\t" + records[7] + "\t" + "NULL" + "\t" + "NULL";
             outputValue.set(orderRecord);
             context.write(outputKey, outputValue);
         }

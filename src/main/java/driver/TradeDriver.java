@@ -4,6 +4,7 @@ import mapper.TradeMapper;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
@@ -29,7 +30,7 @@ public class TradeDriver {
         // 设置Mapper和Reducer类
         job.setMapperClass(TradeMapper.class);
         job.setReducerClass(TradedReducer.class);
-        job.setMapOutputKeyClass(IntWritable.class);
+        job.setMapOutputKeyClass(LongWritable.class);
         job.setMapOutputValueClass(Text.class);
 
 
