@@ -23,14 +23,14 @@ public class TradeMapper extends Mapper<LongWritable, Text, Text, Text> {
             if (!bidApplSeqNum.equals("0")){
                 outputKey.set(bidApplSeqNum);
                 String record = fields[15] + "\t" + fields[12] + "\t" + fields[13] + "\t" +
-                        "NULL" + "\t" + "NULL" + "\t" + bidApplSeqNum + "\t" + fields[14];
+                        "NULL" + "\t" + "NULL" + "\t" + bidApplSeqNum + "\t" + "NULL" + "\t" + fields[14];
                 outputValue.set(record);
                 context.write(outputKey,outputValue);
             }
             if (!offerApplSeqNum.equals("0")){
                 outputKey.set(offerApplSeqNum);
                 String record = fields[15] + "\t" + fields[12] + "\t" + fields[13] + "\t" +
-                        "NULL" + "\t" + "NULL" + "\t" + offerApplSeqNum + "\t" + fields[14];
+                        "NULL" + "\t" + "NULL" + "\t" + offerApplSeqNum + "\t" + "NULL" + "\t" + fields[14];
                 outputValue.set(record);
                 context.write(outputKey,outputValue);
             }
