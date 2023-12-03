@@ -2,13 +2,14 @@ package mapper;
 
 import java.io.IOException;
 
+import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 
-public class TradeMapper extends Mapper<LongWritable, Text, Text, Text> {
+public class TradeMapper extends Mapper<LongWritable, Text, IntWritable, Text> {
 
-    private Text outputKey = new Text();
+    private IntWritable outputKey = new IntWritable();
     private Text outputValue = new Text();
 
     public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
@@ -22,14 +23,14 @@ public class TradeMapper extends Mapper<LongWritable, Text, Text, Text> {
 
         if (isContinuousAuctionTime(tradeTime) && "000001".equals(securityID)){
             if (!bidApplSeqNum.equals("0")){
-                outputKey.set(tradeTime);
+                outputKey.set(Integer.parseInt(tradeTime));
                 String record = fields[15] + "\t" + fields[12] + "\t" + fields[13] + "\t" +
                         "NULL" + "\t" + "NULL" + "\t" + bidApplSeqNum + "\t" + "NULL" + "\t" + cancelType;
                 outputValue.set(record);
                 context.write(outputKey,outputValue);
             }
             if (!offerApplSeqNum.equals("0")){
-                outputKey.set(tradeTime);
+                outputKey.set(Integer.parseInt(tradeTime));
                 String record = fields[15] + "\t" + fields[12] + "\t" + fields[13] + "\t" +
                         "NULL" + "\t" + "NULL" + "\t" + offerApplSeqNum + "\t" + "NULL" + "\t" + cancelType;
                 outputValue.set(record);

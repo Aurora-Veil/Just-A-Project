@@ -1,5 +1,6 @@
 package reducer;
 
+import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
@@ -7,7 +8,7 @@ import org.apache.hadoop.mapreduce.lib.output.MultipleOutputs;
 
 import java.io.IOException;
 
-public class OrderReducer extends Reducer<Text, Text, NullWritable, Text> {
+public class OrderReducer extends Reducer<IntWritable, Text, NullWritable, Text> {
 
     private MultipleOutputs<NullWritable, Text> multipleOutputs;
 
@@ -18,7 +19,7 @@ public class OrderReducer extends Reducer<Text, Text, NullWritable, Text> {
 
 
     @Override
-    protected void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
+    protected void reduce(IntWritable key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
         for (Text value: values) {
             String OrderType = value.toString().split("\t")[4];
             switch (OrderType){

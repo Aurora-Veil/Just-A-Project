@@ -3,6 +3,7 @@ package driver;
 import mapper.OrderMapper;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
@@ -24,7 +25,7 @@ public class OrderDriver {
         job.setReducerClass(OrderReducer.class);
 
         // 指定Map阶段的输出键值对类型
-        job.setMapOutputKeyClass(Text.class);
+        job.setMapOutputKeyClass(IntWritable.class);
         job.setMapOutputValueClass(Text.class);
 
         // 指定Reducer阶段的输出键值对类型
