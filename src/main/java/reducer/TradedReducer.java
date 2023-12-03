@@ -19,7 +19,7 @@ public class TradedReducer extends Reducer<Text, Text, NullWritable, Text> {
             throws IOException, InterruptedException {
         for (Text value : values) {
             String execType = value.toString().split("\t")[7];
-            if ("F".equals(execType)) {
+            if ("2".equals(execType)) {
                 multipleOutputs.write("Traded", NullWritable.get(), value);
             } else {
                 multipleOutputs.write("Canceled", NullWritable.get(), value);
