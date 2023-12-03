@@ -19,7 +19,7 @@ public class OrderMapper extends Mapper<LongWritable, Text, Text, Text> {
         String time = records[12];
 
         if (id.equals("000001") && isInContinuousTrading(time)){
-            outputKey.set(ApplSeqNum);
+            outputKey.set(time);
             String orderRecord = records[12] + "\t" + records[10] + "\t" + records[11] + "\t" + records[13] + "\t"
                     + records[14] + "\t" + records[7] + "\t" + "NULL" + "\t" + "NULL";
             outputValue.set(orderRecord);
@@ -34,6 +34,7 @@ public class OrderMapper extends Mapper<LongWritable, Text, Text, Text> {
         int endTime1 = 1130;
         int startTime2 = 1300;
         int endTime2 = 1457;
+
         return (hourMinute >= startTime1 && hourMinute <= endTime1) || (hourMinute >= startTime2 && hourMinute < endTime2);
     }
 }

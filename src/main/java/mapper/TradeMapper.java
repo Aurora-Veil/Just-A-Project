@@ -20,16 +20,16 @@ public class TradeMapper extends Mapper<LongWritable, Text, Text, Text> {
         String offerApplSeqNum = fields[11];
         String cancelType = fields[14].equals("4")? "1": "2";
 
-        if (!isContinuousAuctionTime(tradeTime) && "000001".equals(securityID)){
+        if (isContinuousAuctionTime(tradeTime) && "000001".equals(securityID)){
             if (!bidApplSeqNum.equals("0")){
-                outputKey.set(bidApplSeqNum);
+                outputKey.set(tradeTime);
                 String record = fields[15] + "\t" + fields[12] + "\t" + fields[13] + "\t" +
                         "NULL" + "\t" + "NULL" + "\t" + bidApplSeqNum + "\t" + "NULL" + "\t" + cancelType;
                 outputValue.set(record);
                 context.write(outputKey,outputValue);
             }
             if (!offerApplSeqNum.equals("0")){
-                outputKey.set(offerApplSeqNum);
+                outputKey.set(tradeTime);
                 String record = fields[15] + "\t" + fields[12] + "\t" + fields[13] + "\t" +
                         "NULL" + "\t" + "NULL" + "\t" + offerApplSeqNum + "\t" + "NULL" + "\t" + cancelType;
                 outputValue.set(record);
