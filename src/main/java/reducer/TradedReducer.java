@@ -18,13 +18,11 @@ public class TradedReducer extends Reducer<Text, Text, NullWritable, Text> {
     protected void reduce(Text key, Iterable<Text> values, Context context)
             throws IOException, InterruptedException {
         for (Text value : values) {
-            String execType = value.toString().split("\t")[5];
+            String execType = value.toString().split("\t")[7];
             if ("F".equals(execType)) {
-                multipleOutputs.write("Traded", NullWritable.get(), new Text("F")); // "1" 表示成交记录
-            break;
+                multipleOutputs.write("Traded", NullWritable.get(), value);
             } else {
-                multipleOutputs.write("Canceled", NullWritable.get(), new Text("4")); // "0" 表示撤单记录
-            break;
+                multipleOutputs.write("Canceled", NullWritable.get(), value);
             }
         }
     }
