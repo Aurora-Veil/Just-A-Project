@@ -17,7 +17,7 @@ public class JoinMapper extends Mapper<LongWritable, Text, LongWritable, Text> {
 
         String time = fields[0];
 
-        Long timePerHour = Long.valueOf(time.substring(time.length() - 9));
+        long timePerHour = Long.parseLong(time.substring(time.length() - 9));
 
         outKey.set(timePerHour);
         outValue.set(value);

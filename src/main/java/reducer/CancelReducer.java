@@ -57,16 +57,16 @@ public class CancelReducer extends Reducer<Text, Text, NullWritable, Text> {
                 outOrderValue.set(limits[1] + "\t" + limits[2] + "\t" + limits[3] + "\t" + limits[4] + "\t" +
                         limits[5] + "\t" + limits[6] + "\t" + limits[7] + "\t" + "1");
                 multipleOutputs.write("LimitOrder", NullWritable.get(), outOrderValue);
-                outCancelValue.set(cancels[1] + "\t" + cancels[2] + "\t" + cancels[3] + "\t" + "NULL" + "\t" +
+                outCancelValue.set(cancels[1] + "\t" + "NULL" + "\t" + cancels[3] + "\t" + "NULL" + "\t" +
                         "2" + "\t" + cancels[6] + "\t" + cancels[7] + "\t" + cancels[8]);
             } else if (IsSpec){
                 outOrderValue.set(specs[1] + "\t" + specs[2] + "\t" + specs[3] + "\t" + specs[4] + "\t" +
                         specs[5] + "\t" + specs[6] + "\t" + specs[7] + "\t" + "1");
                 multipleOutputs.write("SpecOrder", NullWritable.get(), outOrderValue);
-                outCancelValue.set(cancels[1] + "\t" + cancels[2] + "\t" + cancels[3] + "\t" + "NULL" + "\t" +
+                outCancelValue.set(cancels[1] + "\t" + "NULL" + "\t" + cancels[3] + "\t" + "NULL" + "\t" +
                         "U" + "\t" + cancels[6] + "\t" + cancels[7] + "\t" + cancels[8]);
             } else {
-                outCancelValue.set(cancels[1] + "\t" + cancels[2] + "\t" + cancels[3] + "\t" + "NULL" + "\t" +
+                outCancelValue.set(cancels[1] + "\t" + "NULL" + "\t" + cancels[3] + "\t" + "NULL" + "\t" +
                         "1" + "\t" + cancels[6] + "\t" + cancels[7] + "\t" + cancels[8]);
             }
             multipleOutputs.write("Cancel", NullWritable.get(), outCancelValue);
