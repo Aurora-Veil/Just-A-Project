@@ -13,7 +13,7 @@ public class TradeTypeMapper extends Mapper<LongWritable, Text, Text, Text> {
 
     @Override
     protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
-        String[] fields = value.toString().split(",");
+        String[] fields = value.toString().split("\t");
         String orderID = fields[5];
 
         outputKey.set(orderID);
