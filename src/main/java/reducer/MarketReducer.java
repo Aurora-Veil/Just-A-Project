@@ -32,7 +32,7 @@ public class MarketReducer extends Reducer<Text, Text, NullWritable, Text> {
             String[] fields = record.split("\t");
             if (count == 0){
                 finalRecord.set(fields[1] + "\t" + fields[2] + "\t" + fields[3] + "\t" + fields[4] + "\t" +
-                        fields[5] + "\t" + fields[6] + "\t" + fields[7] + "\t" + "1");
+                        fields[5] + "\t" + fields[6] + "\t" + count + "\t" + "1");
             } else {
                 finalRecord.set(fields[1] + "\t" + fields[2] + "\t" + fields[3] + "\t" + fields[4] + "\t" +
                         fields[5] + "\t" + fields[6] + "\t" + count + "\t" + "2");
