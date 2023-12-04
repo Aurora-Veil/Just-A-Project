@@ -37,9 +37,10 @@ public class MarketReducer extends Reducer<Text, Text, NullWritable, Text> {
                 finalRecord.set(fields[1] + "\t" + fields[2] + "\t" + fields[3] + "\t" + fields[4] + "\t" +
                         fields[5] + "\t" + fields[6] + "\t" + count + "\t" + "2");
             }
+            context.write(NullWritable.get(), finalRecord);
         }
 
-        context.write(NullWritable.get(), finalRecord);
+
     }
 
 }
