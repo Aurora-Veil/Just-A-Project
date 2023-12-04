@@ -48,25 +48,12 @@ public class FinalJoin {
         // 提交作业
         job.waitForCompletion(true);
 
-        // 获取文件系统
-        FileSystem fs = FileSystem.get(conf);
+        Process process = Runtime.getRuntime().exec("hdfs dfs -mv FinalOutput/part-r-00000 Output.txt");
 
-        // 获取原始输出文件路径
-        Path originalOutputFile = new Path(args[4] +"/part-r-00000");
+        // 获取命令执行结果，如果为 0 表示成功
+        int exitCode = process.waitFor();
 
-        // 新的输出文件路径
-        Path finalOutputFile = new Path("Output/Output.txt");
-
-        // 将原始输出文件改名为 Output.txt
-        renameOutputFile(fs, originalOutputFile, finalOutputFile);
-    }
-
-    // 将输出文件改名
-    private static void renameOutputFile(FileSystem fs, Path originalFile, Path finalFile) throws IOException {
-        if (fs.rename(originalFile, finalFile)) {
-            System.out.println("Output file renamed successfully.");
-        } else {
-            System.err.println("Failed to rename output file.");
-        }
+        // 输出执行结果
+        System.out.println("Command exit code: " + exitCode);
     }
 }
