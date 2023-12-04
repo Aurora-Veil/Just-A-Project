@@ -45,15 +45,6 @@ public class FinalJoin {
         Path outputDir = new Path(args[4]);
         FileOutputFormat.setOutputPath(job, outputDir);
 
-        // 提交作业
-        job.waitForCompletion(true);
-
-        Process process = Runtime.getRuntime().exec("hdfs dfs -mv FinalOutput/part-r-00000 Output.txt");
-
-        // 获取命令执行结果，如果为 0 表示成功
-        int exitCode = process.waitFor();
-
-        // 输出执行结果
-        System.out.println("Command exit code: " + exitCode);
+        System.exit(job.waitForCompletion(true) ? 0 : 1);
     }
 }
