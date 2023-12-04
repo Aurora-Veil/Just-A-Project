@@ -2,6 +2,8 @@ package driver;
 
 import mapper.JoinMapper;
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.FileUtil;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.NullWritable;
@@ -12,7 +14,7 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import reducer.JoinReducer;
 
 
-import java.io.IOException;
+import java.io.*;
 
 public class FinalJoin {
     public static void main(String[] args) throws IOException, InterruptedException, ClassNotFoundException {
@@ -40,9 +42,31 @@ public class FinalJoin {
         TextInputFormat.addInputPath(job, new Path(args[3]));
 
         // 设置输出路径
-        FileOutputFormat.setOutputPath(job, new Path(args[4]));
+        Path outputDir = new Path(args[4]);
+        FileOutputFormat.setOutputPath(job, outputDir);
 
         // 提交作业
-        System.exit(job.waitForCompletion(true) ? 0 : 1);
+        job.waitForCompletion(true);
+
+        // 获取文件系统
+        FileSystem fs = FileSystem.get(conf);
+
+        // 获取原始输出文件路径
+        Path originalOutputFile = new Path(args[4] +"/part-r-00000");
+
+        // 新的输出文件路径
+        Path finalOutputFile = new Path("Output/Output.txt");
+
+        // 将原始输出文件改名为 Output.txt
+        renameOutputFile(fs, originalOutputFile, finalOutputFile);
+    }
+
+    // 将输出文件改名
+    private static void renameOutputFile(FileSystem fs, Path originalFile, Path finalFile) throws IOException {
+        if (fs.rename(originalFile, finalFile)) {
+            System.out.println("Output file renamed successfully.");
+        } else {
+            System.err.println("Failed to rename output file.");
+        }
     }
 }
