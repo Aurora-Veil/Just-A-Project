@@ -12,6 +12,7 @@ import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.MultipleOutputs;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
+import reducer.CancelReducer;
 import reducer.MarketReducer;
 
 import java.io.IOException;
@@ -27,7 +28,7 @@ public class CancelDriver {
         MultipleInputs.addInputPath(job, new Path(args[1]), TextInputFormat.class, OrderTypeMapper.class);
         MultipleInputs.addInputPath(job, new Path(args[2]), TextInputFormat.class, TradeTypeMapper.class);
 
-        job.setReducerClass(MarketReducer.class);
+        job.setReducerClass(CancelReducer.class);
 
         job.setMapOutputKeyClass(Text.class);
         job.setMapOutputValueClass(Text.class);
