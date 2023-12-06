@@ -12,7 +12,7 @@ import java.io.IOException;
  * Input: <LongWritable, Text> - Input key-value pair.
  * Output: <LongWritable, Text> - Output key-value pair with time as the key and filtered order records as the value.
  */
-public class OrderMapper extends Mapper<Text, Text, Text, Text> {
+public class OrderMapper extends Mapper<LongWritable, Text, Text, Text> {
     private Text outputKey = new Text();
     private Text outputValue = new Text();
 
@@ -28,21 +28,20 @@ public class OrderMapper extends Mapper<Text, Text, Text, Text> {
      * @throws InterruptedException If the task is interrupted.
      */
     @Override
-    protected void map(Text key, Text value, Context context) throws IOException, InterruptedException {
+    protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
         // Split the input value using tab as the delimiter
         String[] records = value.toString().split("\t");
 
         // Extract relevant fields from the records
+        String applSeqNum = records[7];
         String id = records[8];
         String time = records[12];
         String orderType = records[14];
-        String orderID = records[7];
 
         // Check if the stock ID is "000001" and the time is during continuous trading
         if (id.equals("000001") && isInContinuousTrading(time)){
             // Extract the time in hours for grouping
-            long timeForHour = Long.parseLong(time.substring(time.length() - 9));
-            outputKey.set(orderID);
+            outputKey.set(applSeqNum);
 
             /*
              Prepare the order record based on the order type
@@ -50,23 +49,27 @@ public class OrderMapper extends Mapper<Text, Text, Text, Text> {
              The format is: TimeStamp, Price, Size, Buy_Sell_Flag, Order_Type, Order_ID, Market_Order_Type, Cancel_Type
              Unknown and unnecessary are recorded as "NULL", here for the order are Market_Order_Type and Cancel_Type
              */
-            String orderRecord;
-            if (orderType.equals("2")){
-                orderRecord ="Limit"+"\t"+ records[12] + "\t" + records[10] + "\t" + records[11] + "\t" + records[13] + "\t"
-                        + records[14] + "\t" + records[7] + "\t" + "NULL" + "\t" + "NULL";
-            } else if(orderType.equals("1")){
-                orderRecord = "Market"+"\t"+records[12] + "\t" + "NULL" + "\t" + records[11] + "\t" + records[13] + "\t"
-                        + records[14] + "\t" + records[7] + "\t" + "NULL" + "\t" + "NULL";
-            }else {
-                orderRecord = "Spec"+"\t"+records[12] + "\t" + "NULL" + "\t" + records[11] + "\t" + records[13] + "\t"
-                        + records[14] + "\t" + records[7] + "\t" + "NULL" + "\t" + "NULL";
+            String orderRecord = "";
+            switch (orderType) {
+                case "2":
+                    orderRecord = "Limit" + "\t" + records[12] + "\t" + records[10] + "\t" + records[11] + "\t" + records[13] + "\t"
+                            + records[14] + "\t" + records[7] + "\t" + "NULL" + "\t" + "NULL";
+                    break;
+                case "1":
+                    orderRecord = "Market" + "\t" + records[12] + "\t" + "NULL" + "\t" + records[11] + "\t" + records[13] + "\t"
+                            + records[14] + "\t" + records[7] + "\t" + "NULL" + "\t" + "NULL";
+                    break;
+                case "U":
+                    orderRecord = "Spec" + "\t" + records[12] + "\t" + "NULL" + "\t" + records[11] + "\t" + records[13] + "\t"
+                            + records[14] + "\t" + records[7] + "\t" + "NULL" + "\t" + "NULL";
+                    break;
             }
             outputValue.set(orderRecord);
 
             /*
              Emit the output key-value pair
-             Output key = time
-             Output value = record
+             Output key = id
+             Output value = identifier + record
              */
             context.write(outputKey, outputValue);
         }

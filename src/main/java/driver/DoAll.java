@@ -1,7 +1,5 @@
 package driver;
 
-//import mapper.OrderTypeMapper;
-//import mapper.TradeTypeMapper;
 import mapper.OrderMapper;
 import mapper.TradeMapper;
 import org.apache.hadoop.conf.Configuration;
@@ -14,23 +12,23 @@ import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.MultipleOutputs;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
-import reducer.CancelReducer;
-//import reducer.MarketReducer;
+import reducer.DoAllReducer;
 
 import java.io.IOException;
 
-public class CancelDriver {
+public class DoAll {
     public static void main(String[] args) throws IOException, InterruptedException, ClassNotFoundException {
         Configuration conf = new Configuration();
-        Job job = Job.getInstance(conf, "OtherSupplement");
+        Job job = Job.getInstance(conf, "Do step1 and step2");
 
-        job.setJarByClass(CancelDriver.class);
+        job.setJarByClass(DoAll.class);
 
         MultipleInputs.addInputPath(job, new Path(args[0]), TextInputFormat.class, OrderMapper.class);
         MultipleInputs.addInputPath(job, new Path(args[1]), TextInputFormat.class, OrderMapper.class);
         MultipleInputs.addInputPath(job, new Path(args[2]), TextInputFormat.class, TradeMapper.class);
+        MultipleInputs.addInputPath(job, new Path(args[3]), TextInputFormat.class, TradeMapper.class);
 
-        job.setReducerClass(CancelReducer.class);
+        job.setReducerClass(DoAllReducer.class);
 
         job.setMapOutputKeyClass(Text.class);
         job.setMapOutputValueClass(Text.class);
@@ -38,11 +36,12 @@ public class CancelDriver {
         job.setOutputKeyClass(NullWritable.class);
         job.setOutputValueClass(Text.class);
 
-        FileOutputFormat.setOutputPath(job, new Path(args[3]));
+        FileOutputFormat.setOutputPath(job, new Path(args[4]));
 
         MultipleOutputs.addNamedOutput(job, "Cancel", TextOutputFormat.class, NullWritable.class, Text.class);
         MultipleOutputs.addNamedOutput(job, "LimitOrder", TextOutputFormat.class, NullWritable.class, Text.class);
         MultipleOutputs.addNamedOutput(job, "SpecOrder", TextOutputFormat.class, NullWritable.class, Text.class);
+        MultipleOutputs.addNamedOutput(job, "MarketOrder", TextOutputFormat.class, NullWritable.class, Text.class);
 
         System.exit(job.waitForCompletion(true) ? 0 : 1);
     }
