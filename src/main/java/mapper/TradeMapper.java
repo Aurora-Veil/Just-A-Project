@@ -12,9 +12,9 @@ import org.apache.hadoop.mapreduce.Mapper;
  * Input: <LongWritable, Text> - Input key-value pair.
  * Output: <LongWritable, Text> - Output key-value pair with time as the key and filtered trade records as the value.
  */
-public class TradeMapper extends Mapper<LongWritable, Text, LongWritable, Text> {
+public class TradeMapper extends Mapper<Text, Text, Text, Text> {
 
-    private LongWritable outputKey = new LongWritable();
+    private Text outputKey = new Text();
     private Text outputValue = new Text();
 
     /**
@@ -36,10 +36,11 @@ public class TradeMapper extends Mapper<LongWritable, Text, LongWritable, Text> 
         String tradeTime = fields[15];
         String bidApplSeqNum = fields[10];
         String offerApplSeqNum = fields[11];
-        String cancelType = fields[14].equals("4")? "1": "2";
+        String cancelType = fields[14].equals("4") ? "1" : "2";
+        String record = new String();
 
         // Check if the stock ID is "000001" and the time is during continuous trading
-        if (isContinuousAuctionTime(tradeTime) && "000001".equals(securityID)){
+        if (isContinuousAuctionTime(tradeTime) && "000001".equals(securityID)) {
             // Extract the time in hours for grouping
             long timeForHour = Long.parseLong(tradeTime.substring(tradeTime.length() - 9));
 
@@ -58,19 +59,40 @@ public class TradeMapper extends Mapper<LongWritable, Text, LongWritable, Text> 
              For example, if the original record is Cancel_Type = F(2), then generates two records, one is for bid with bidApplSeqNum in Order_ID, another is for offer with offerApplSeqNum
                           If the original record is Cancel_Type = 4(1), it only has one efficient AppSeqNum, only generates one record
              */
-            if (!bidApplSeqNum.equals("0")){
-                outputKey.set(timeForHour);
-                String record = fields[15] + "\t" + fields[12] + "\t" + fields[13] + "\t" +
-                        "1" + "\t" + "NULL" + "\t" + bidApplSeqNum + "\t" + "NULL" + "\t" + cancelType;
+            if (!bidApplSeqNum.equals("0")) {
+//                outputKey.set(timeForHour);
+                StringBuilder record1 = new StringBuilder(fields[15] + "\t" + fields[12] + "\t" + fields[13] + "\t" +
+                        "1" + "\t" + "NULL" + "\t" + bidApplSeqNum + "\t" + "NULL" + "\t" + cancelType);
+
+                if (cancelType.equals("2")) {
+                    record1.insert(0,"Trade\t");
+                     record = record1.toString();
+                } else {
+                    record1.insert(0,"Cancel\t");
+                     record = record1.toString();
+                }
                 outputValue.set(record);
-                context.write(outputKey,outputValue);
+                String orderID = bidApplSeqNum;
+                outputKey.set(orderID);
+                context.write(outputKey, outputValue);
+
+
             }
-            if (!offerApplSeqNum.equals("0")){
-                outputKey.set(timeForHour);
-                String record = fields[15] + "\t" + fields[12] + "\t" + fields[13] + "\t" +
-                        "2" + "\t" + "NULL" + "\t" + offerApplSeqNum + "\t" + "NULL" + "\t" + cancelType;
+            if (!offerApplSeqNum.equals("0")) {
+//                outputKey.set(timeForHour);
+                StringBuilder record1 = new StringBuilder(fields[15] + "\t" + fields[12] + "\t" + fields[13] + "\t" +
+                        "2" + "\t" + "NULL" + "\t" + offerApplSeqNum + "\t" + "NULL" + "\t" + cancelType);
+                if (cancelType.equals("2")) {
+                    record1.insert(0,"Trade\t");
+                    record = record1.toString();
+                } else {
+                    record1.insert(0,"Cancel\t");
+                    record = record1.toString();
+                }
                 outputValue.set(record);
-                context.write(outputKey,outputValue);
+                String orderID = offerApplSeqNum;
+                outputKey.set(orderID);
+                context.write(outputKey, outputValue);
             }
         }
     }

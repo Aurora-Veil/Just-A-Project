@@ -21,7 +21,7 @@ public class TradedReducer extends Reducer<LongWritable, Text, NullWritable, Tex
     protected void reduce(LongWritable key, Iterable<Text> values, Context context)
             throws IOException, InterruptedException {
         for (Text value : values) {
-            String execType = value.toString().split("\t")[7];
+            String execType = value.toString().split("\t")[8];
             if ("2".equals(execType)) {
                 multipleOutputs.write("Traded", NullWritable.get(), value);
             } else {

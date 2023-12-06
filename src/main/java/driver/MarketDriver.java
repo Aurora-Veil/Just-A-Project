@@ -1,7 +1,9 @@
 package driver;
 
-import mapper.OrderTypeMapper;
-import mapper.TradeTypeMapper;
+import mapper.OrderMapper;
+//import mapper.OrderTypeMapper;
+import mapper.TradeMapper;
+//import mapper.TradeTypeMapper;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.NullWritable;
@@ -21,8 +23,8 @@ public class MarketDriver {
 
         job.setJarByClass(MarketDriver.class);
 
-        MultipleInputs.addInputPath(job, new Path(args[0]), TextInputFormat.class, OrderTypeMapper.class);
-        MultipleInputs.addInputPath(job, new Path(args[1]), TextInputFormat.class, TradeTypeMapper.class);
+        MultipleInputs.addInputPath(job, new Path(args[0]), TextInputFormat.class, OrderMapper.class);
+        MultipleInputs.addInputPath(job, new Path(args[1]), TextInputFormat.class, TradeMapper.class);
 
         job.setReducerClass(MarketReducer.class);
 

@@ -12,8 +12,8 @@ import java.io.IOException;
  * Input: <LongWritable, Text> - Input key-value pair.
  * Output: <LongWritable, Text> - Output key-value pair with time as the key and filtered order records as the value.
  */
-public class OrderMapper extends Mapper<LongWritable, Text, LongWritable, Text> {
-    private LongWritable outputKey = new LongWritable();
+public class OrderMapper extends Mapper<Text, Text, Text, Text> {
+    private Text outputKey = new Text();
     private Text outputValue = new Text();
 
 
@@ -28,7 +28,7 @@ public class OrderMapper extends Mapper<LongWritable, Text, LongWritable, Text> 
      * @throws InterruptedException If the task is interrupted.
      */
     @Override
-    protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
+    protected void map(Text key, Text value, Context context) throws IOException, InterruptedException {
         // Split the input value using tab as the delimiter
         String[] records = value.toString().split("\t");
 
@@ -36,12 +36,13 @@ public class OrderMapper extends Mapper<LongWritable, Text, LongWritable, Text> 
         String id = records[8];
         String time = records[12];
         String orderType = records[14];
+        String orderID = records[7];
 
         // Check if the stock ID is "000001" and the time is during continuous trading
         if (id.equals("000001") && isInContinuousTrading(time)){
             // Extract the time in hours for grouping
             long timeForHour = Long.parseLong(time.substring(time.length() - 9));
-            outputKey.set(timeForHour);
+            outputKey.set(orderID);
 
             /*
              Prepare the order record based on the order type
@@ -51,10 +52,13 @@ public class OrderMapper extends Mapper<LongWritable, Text, LongWritable, Text> 
              */
             String orderRecord;
             if (orderType.equals("2")){
-                orderRecord = records[12] + "\t" + records[10] + "\t" + records[11] + "\t" + records[13] + "\t"
+                orderRecord ="Limit"+"\t"+ records[12] + "\t" + records[10] + "\t" + records[11] + "\t" + records[13] + "\t"
                         + records[14] + "\t" + records[7] + "\t" + "NULL" + "\t" + "NULL";
-            } else{
-                orderRecord = records[12] + "\t" + "NULL" + "\t" + records[11] + "\t" + records[13] + "\t"
+            } else if(orderType.equals("1")){
+                orderRecord = "Market"+"\t"+records[12] + "\t" + "NULL" + "\t" + records[11] + "\t" + records[13] + "\t"
+                        + records[14] + "\t" + records[7] + "\t" + "NULL" + "\t" + "NULL";
+            }else {
+                orderRecord = "Spec"+"\t"+records[12] + "\t" + "NULL" + "\t" + records[11] + "\t" + records[13] + "\t"
                         + records[14] + "\t" + records[7] + "\t" + "NULL" + "\t" + "NULL";
             }
             outputValue.set(orderRecord);

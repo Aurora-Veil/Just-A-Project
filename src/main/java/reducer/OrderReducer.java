@@ -22,7 +22,7 @@ public class OrderReducer extends Reducer<LongWritable, Text, NullWritable, Text
     @Override
     protected void reduce(LongWritable key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
         for (Text value: values) {
-            String OrderType = value.toString().split("\t")[4];
+            String OrderType = value.toString().split("\t")[5];
             switch (OrderType){
                 case "1":
                     multipleOutputs.write("MarketOrder", NullWritable.get(), value);

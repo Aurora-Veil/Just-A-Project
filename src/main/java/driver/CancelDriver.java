@@ -1,7 +1,9 @@
 package driver;
 
-import mapper.OrderTypeMapper;
-import mapper.TradeTypeMapper;
+//import mapper.OrderTypeMapper;
+//import mapper.TradeTypeMapper;
+import mapper.OrderMapper;
+import mapper.TradeMapper;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.NullWritable;
@@ -13,7 +15,7 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.MultipleOutputs;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import reducer.CancelReducer;
-import reducer.MarketReducer;
+//import reducer.MarketReducer;
 
 import java.io.IOException;
 
@@ -24,9 +26,9 @@ public class CancelDriver {
 
         job.setJarByClass(CancelDriver.class);
 
-        MultipleInputs.addInputPath(job, new Path(args[0]), TextInputFormat.class, OrderTypeMapper.class);
-        MultipleInputs.addInputPath(job, new Path(args[1]), TextInputFormat.class, OrderTypeMapper.class);
-        MultipleInputs.addInputPath(job, new Path(args[2]), TextInputFormat.class, TradeTypeMapper.class);
+        MultipleInputs.addInputPath(job, new Path(args[0]), TextInputFormat.class, OrderMapper.class);
+        MultipleInputs.addInputPath(job, new Path(args[1]), TextInputFormat.class, OrderMapper.class);
+        MultipleInputs.addInputPath(job, new Path(args[2]), TextInputFormat.class, TradeMapper.class);
 
         job.setReducerClass(CancelReducer.class);
 

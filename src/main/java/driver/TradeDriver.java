@@ -30,7 +30,9 @@ public class TradeDriver {
         // 设置Mapper和Reducer类
         job.setMapperClass(TradeMapper.class);
         job.setReducerClass(TradedReducer.class);
-        job.setMapOutputKeyClass(LongWritable.class);
+
+
+        job.setMapOutputKeyClass(Text.class);
         job.setMapOutputValueClass(Text.class);
 
 
