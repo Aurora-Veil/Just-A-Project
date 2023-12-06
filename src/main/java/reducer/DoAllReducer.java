@@ -1,6 +1,5 @@
 package reducer;
 
-import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
@@ -8,27 +7,25 @@ import org.apache.hadoop.mapreduce.lib.output.MultipleOutputs;
 
 import java.io.IOException;
 
-public class CancelReducer extends Reducer<Text, Text, NullWritable, Text> {
+public class DoAllReducer extends Reducer<Text, Text, NullWritable, Text> {
 
     private MultipleOutputs<NullWritable, Text> multipleOutputs;
+    private Text outMarketValue = new Text();
     private Text outOrderValue = new Text();
     private Text outCancelValue = new Text();
 
     @Override
-    protected void setup(Context context) {
-        multipleOutputs = new MultipleOutputs<>(context);
-    }
-
-
-    @Override
     protected void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
+        boolean IsCancel = false;
         boolean IsLimit = false;
         boolean IsSpec= false;
-        boolean IsCancel = false;
+        boolean IsMarket = false;
+        int count = 0;
 
         String Limit = "";
         String Spec = "";
         String Cancel = "";
+        String Market = "";
 
         for (Text value: values) {
             String Title = value.toString().split("\t")[0];
@@ -45,7 +42,26 @@ public class CancelReducer extends Reducer<Text, Text, NullWritable, Text> {
                     IsLimit = true;
                     Limit = value.toString();
                     break;
+                case "Market":
+                    IsMarket = true;
+                    Market = value.toString();
+                    break;
+                case "Trade":
+                    count ++;
+                    break;
             }
+        }
+
+        if (IsMarket){
+            String[] fields = Market.split("\t");
+            if (count == 0){
+                outMarketValue.set(fields[1] + "\t" + fields[2] + "\t" + fields[3] + "\t" + fields[4] + "\t" +
+                        fields[5] + "\t" + fields[6] + "\t" + count + "\t" + "1");
+            } else {
+                outMarketValue.set(fields[1] + "\t" + fields[2] + "\t" + fields[3] + "\t" + fields[4] + "\t" +
+                        fields[5] + "\t" + fields[6] + "\t" + count + "\t" + "2");
+            }
+            multipleOutputs.write("MarketOrder", NullWritable.get(), outMarketValue);
         }
 
         String[] limits = Limit.split("\t");
@@ -81,6 +97,11 @@ public class CancelReducer extends Reducer<Text, Text, NullWritable, Text> {
                 multipleOutputs.write("SpecOrder", NullWritable.get(), outOrderValue);
             }
         }
+    }
+
+    @Override
+    protected void setup(Context context) {
+        multipleOutputs = new MultipleOutputs<>(context);
     }
 
     @Override

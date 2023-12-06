@@ -12,9 +12,9 @@ import org.apache.hadoop.mapreduce.Mapper;
  * Input: <LongWritable, Text> - Input key-value pair.
  * Output: <LongWritable, Text> - Output key-value pair with time as the key and filtered trade records as the value.
  */
-public class TradeMapper extends Mapper<LongWritable, Text, LongWritable, Text> {
+public class TradeMapper extends Mapper<LongWritable, Text, Text, Text> {
 
-    private LongWritable outputKey = new LongWritable();
+    private Text outputKey = new Text();
     private Text outputValue = new Text();
 
     /**
@@ -40,9 +40,6 @@ public class TradeMapper extends Mapper<LongWritable, Text, LongWritable, Text> 
 
         // Check if the stock ID is "000001" and the time is during continuous trading
         if (isContinuousAuctionTime(tradeTime) && "000001".equals(securityID)){
-            // Extract the time in hours for grouping
-            long timeForHour = Long.parseLong(tradeTime.substring(tradeTime.length() - 9));
-
             /*
              Prepare the trade record based on the bidApplSeqNum and offerApplSeqNum
              Records' order are transformed into the final output's format
@@ -58,19 +55,34 @@ public class TradeMapper extends Mapper<LongWritable, Text, LongWritable, Text> 
              For example, if the original record is Cancel_Type = F(2), then generates two records, one is for bid with bidApplSeqNum in Order_ID, another is for offer with offerApplSeqNum
                           If the original record is Cancel_Type = 4(1), it only has one efficient AppSeqNum, only generates one record
              */
-            if (!bidApplSeqNum.equals("0")){
-                outputKey.set(timeForHour);
-                String record = fields[15] + "\t" + fields[12] + "\t" + fields[13] + "\t" +
+            if (!bidApplSeqNum.equals("0") && !offerApplSeqNum.equals("0")){
+                outputKey.set(bidApplSeqNum);
+                String record = "Trade" + "\t" + fields[15] + "\t" + fields[12] + "\t" + fields[13] + "\t" +
                         "1" + "\t" + "NULL" + "\t" + bidApplSeqNum + "\t" + "NULL" + "\t" + cancelType;
                 outputValue.set(record);
                 context.write(outputKey,outputValue);
-            }
-            if (!offerApplSeqNum.equals("0")){
-                outputKey.set(timeForHour);
-                String record = fields[15] + "\t" + fields[12] + "\t" + fields[13] + "\t" +
+
+                outputKey.set(offerApplSeqNum);
+                String anotherRecord = "Trade" + "\t" + fields[15] + "\t" + fields[12] + "\t" + fields[13] + "\t" +
                         "2" + "\t" + "NULL" + "\t" + offerApplSeqNum + "\t" + "NULL" + "\t" + cancelType;
-                outputValue.set(record);
+                outputValue.set(anotherRecord);
                 context.write(outputKey,outputValue);
+            } else {
+                String record;
+                if (offerApplSeqNum.equals("0")){
+                    outputKey.set(bidApplSeqNum);
+                    record = "Cancel" + "\t" + fields[15] + "\t" + "NULL" + "\t" + fields[13] + "\t" +
+                            "NULL" + "\t" + "NULL" + "\t" + bidApplSeqNum + "\t" + "NULL" + "\t" + cancelType;
+                    outputValue.set(record);
+                    context.write(outputKey,outputValue);
+                } else {
+                    outputKey.set(offerApplSeqNum);
+                    record = "Cancel" + "\t" + fields[15] + "\t" + "NULL" + "\t" + fields[13] + "\t" +
+                            "NULL" + "\t" + "NULL" + "\t" + offerApplSeqNum + "\t" + "NULL" + "\t" + cancelType;
+                    outputValue.set(record);
+                    context.write(outputKey,outputValue);
+                }
+
             }
         }
     }
@@ -78,7 +90,7 @@ public class TradeMapper extends Mapper<LongWritable, Text, LongWritable, Text> 
     /**
      * Checks if the given time is within continuous trading hours.
      *
-     * @param tradeTime The time in the format of TransactTime N(20).
+     * @param tradeTime The time in the format of TradeTime N(20).
      * @return True if the time is within continuous trading hours: 9:30 - 11:30, 13:00 - 14:57, false otherwise.
      */
     private boolean isContinuousAuctionTime(String tradeTime) {
