@@ -48,7 +48,9 @@ public class DoAllReducer extends Reducer<Text, Text, NullWritable, Text> {
           The purpose of this code is to categorize data based on the order types in the dataset.
           It sets corresponding flags (`IsCancel`, `IsSpec`, `IsLimit`, `IsMarket`),
           stores values of respective types (`Cancel`, `Spec`, `Limit`, `Market`).
-          In the subsequent code, further processing and output are performed based on these flags and stored values.
+
+          Through the order id and value, all the information related to an order can be found through this transaction data.
+          There are several different transaction prices, and MARKET_ORDER_TYPE can be obtained from this.
          */
         for (Text value : values) {
             String Title = value.toString().split("\t")[0];
@@ -75,8 +77,16 @@ public class DoAllReducer extends Reducer<Text, Text, NullWritable, Text> {
             }
         }
         /*
-        The following performs the final processing of different types of orders.
-        Writes the results to distinct output files based on the order type and according to different case.
+         The following performs the final processing of different types of orders.
+         Writes the results to distinct output files based on the order type and according to different case.
+         Fill CANCEL_TYPE, MARKET_ORDER_TYPE into the value correctly by using the above boolean value conditions
+         such as IsCancel, IsSpec, IsLimit, IsMarket, etc.
+         */
+
+
+        /*
+        Process Market order. If count is 0, it's a canceled order.
+        If count is not 0, it's a filled order.
          */
         if (IsMarket) {
             String[] fields = Market.split("\t");
@@ -93,31 +103,50 @@ public class DoAllReducer extends Reducer<Text, Text, NullWritable, Text> {
         String[] limits = Limit.split("\t");
         String[] specs = Spec.split("\t");
 
+        /*
+           Process Cancel of Limit/Market/Spec order.
+           Fill the ORDER_TYPE of the cancel order and the CANCEL_TYPE of the limit order by matching the order id, respectively
+        */
         if (IsCancel) {
             String[] cancels = Cancel.split("\t");
             if (IsLimit) {
+
+                //限价单与撤单匹配，IsCancel= true，限价单CANCEL_TYPE为1，对应撤单的ORDER_TYPE为2
+
                 outOrderValue.set(limits[1] + "\t" + limits[2] + "\t" + limits[3] + "\t" + limits[4] + "\t" +
                         limits[5] + "\t" + limits[6] + "\t" + limits[7] + "\t" + "1");
                 multipleOutputs.write("LimitOrder", NullWritable.get(), outOrderValue);
                 outCancelValue.set(cancels[1] + "\t" + "NULL" + "\t" + cancels[3] + "\t" + "NULL" + "\t" +
                         "2" + "\t" + cancels[6] + "\t" + cancels[7] + "\t" + cancels[8]);
             } else if (IsSpec) {
+
+                //本方最优单与撤单匹配，IsCancel= true，限价单CANCEL_TYPE为1，对应撤单的ORDER_TYPE为U
+
                 outOrderValue.set(specs[1] + "\t" + specs[2] + "\t" + specs[3] + "\t" + specs[4] + "\t" +
                         specs[5] + "\t" + specs[6] + "\t" + specs[7] + "\t" + "1");
                 multipleOutputs.write("SpecOrder", NullWritable.get(), outOrderValue);
                 outCancelValue.set(cancels[1] + "\t" + "NULL" + "\t" + cancels[3] + "\t" + "NULL" + "\t" +
                         "U" + "\t" + cancels[6] + "\t" + cancels[7] + "\t" + cancels[8]);
             } else {
+
+                //市价单与撤单匹配，IsCancel= true，限价单CANCEL_TYPE为1，对应撤单的ORDER_TYPE为1
+
                 outCancelValue.set(cancels[1] + "\t" + "NULL" + "\t" + cancels[3] + "\t" + "NULL" + "\t" +
                         "1" + "\t" + cancels[6] + "\t" + cancels[7] + "\t" + cancels[8]);
             }
             multipleOutputs.write("Cancel", NullWritable.get(), outCancelValue);
         } else {
             if (IsLimit) {
+
+                //限价单与撤单不匹配，IsCancel= false，限价单CANCEL_TYPE为 2，无对应撤单
+
                 outOrderValue.set(limits[1] + "\t" + limits[2] + "\t" + limits[3] + "\t" + limits[4] + "\t" +
                         limits[5] + "\t" + limits[6] + "\t" + limits[7] + "\t" + "2");
                 multipleOutputs.write("LimitOrder", NullWritable.get(), outOrderValue);
             } else if (IsSpec) {
+
+                //限价单与撤单不匹配，IsCancel= false，限价单CANCEL_TYPE为 2，无对应撤单
+
                 outOrderValue.set(specs[1] + "\t" + specs[2] + "\t" + specs[3] + "\t" + specs[4] + "\t" +
                         specs[5] + "\t" + specs[6] + "\t" + specs[7] + "\t" + "2");
                 multipleOutputs.write("SpecOrder", NullWritable.get(), outOrderValue);
