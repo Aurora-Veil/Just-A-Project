@@ -89,6 +89,7 @@ public class DoAllReducer extends Reducer<Text, Text, NullWritable, Text> {
         If count is not 0, it's a filled order.
          */
         if (IsMarket) {
+            //市价单填入MARKET_ORDER_TYPE
             String[] fields = Market.split("\t");
             if (count == 0) {
                 outMarketValue.set(fields[1] + "\t" + fields[2] + "\t" + fields[3] + "\t" + fields[4] + "\t" +
