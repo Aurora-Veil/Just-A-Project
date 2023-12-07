@@ -52,7 +52,6 @@ public class JoinReducer extends Reducer<LongWritable, Text, NullWritable, Text>
     }
 
     /*
-    The compareTo method compares based on the sequenceNumber field in ascending order.
     In the reduce method, the records list is sorted to ensure that the output is in ascending order based on time and sequence number.
      */
     private static class DataRecord implements Comparable<DataRecord> {
@@ -68,6 +67,9 @@ public class JoinReducer extends Reducer<LongWritable, Text, NullWritable, Text>
             return data;
         }
 
+        /*
+        The compareTo method compares based on the sequenceNumber field in ascending order.
+         */
         @Override
         public int compareTo(DataRecord other) {
             return Integer.compare(Integer.parseInt(this.sequenceNumber), Integer.parseInt(other.sequenceNumber));

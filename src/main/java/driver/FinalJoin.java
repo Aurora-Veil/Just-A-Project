@@ -40,6 +40,7 @@ public class FinalJoin {
         job.setOutputKeyClass(NullWritable.class);
         job.setOutputValueClass(Text.class);
 
+        // Add multiple input paths using TextInputFormat
         TextInputFormat.addInputPath(job, new Path(args[0]));
         TextInputFormat.addInputPath(job, new Path(args[1]));
         TextInputFormat.addInputPath(job, new Path(args[2]));
@@ -49,6 +50,7 @@ public class FinalJoin {
         Path outputDir = new Path(args[4]);
         FileOutputFormat.setOutputPath(job, outputDir);
 
+        // Submit the job and exit with success (0) or failure (1) status
         System.exit(job.waitForCompletion(true) ? 0 : 1);
     }
 }

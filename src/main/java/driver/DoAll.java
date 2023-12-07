@@ -30,11 +30,13 @@ public class DoAll {
 
         job.setJarByClass(DoAll.class);
 
+        // Configure multiple input sources with corresponding mapper classes
         MultipleInputs.addInputPath(job, new Path(args[0]), TextInputFormat.class, OrderMapper.class);
         MultipleInputs.addInputPath(job, new Path(args[1]), TextInputFormat.class, OrderMapper.class);
         MultipleInputs.addInputPath(job, new Path(args[2]), TextInputFormat.class, TradeMapper.class);
         MultipleInputs.addInputPath(job, new Path(args[3]), TextInputFormat.class, TradeMapper.class);
 
+        // Set the reducer class
         job.setReducerClass(DoAllReducer.class);
 
         // Set the key and value classes for the mapper output
@@ -45,6 +47,7 @@ public class DoAll {
         job.setOutputKeyClass(NullWritable.class);
         job.setOutputValueClass(Text.class);
 
+        // Set the output path for the final output
         FileOutputFormat.setOutputPath(job, new Path(args[4]));
 
         // Configure multiple named outputs using MultipleOutputs
@@ -53,6 +56,7 @@ public class DoAll {
         MultipleOutputs.addNamedOutput(job, "SpecOrder", TextOutputFormat.class, NullWritable.class, Text.class);
         MultipleOutputs.addNamedOutput(job, "MarketOrder", TextOutputFormat.class, NullWritable.class, Text.class);
 
+        // Submit the job and exit with success (0) or failure (1) status
         System.exit(job.waitForCompletion(true) ? 0 : 1);
     }
 }
