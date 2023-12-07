@@ -16,23 +16,27 @@ import reducer.JoinReducer;
 
 import java.io.*;
 
+/**
+ * This class is the driver program for the final join MapReduce job. It combines data from multiple input sources
+ * using a custom mapper and reducer to produce a consolidated output.
+ */
 public class FinalJoin {
     public static void main(String[] args) throws IOException, InterruptedException, ClassNotFoundException {
-        // 创建配置对象和作业对象
+        // Create a Hadoop configuration and a new MapReduce job instance with a name
         Configuration conf = new Configuration();
         Job job = Job.getInstance(conf, "FinalJoin");
 
-        // 设置主类
+        // Set the main class
         job.setJarByClass(FinalJoin.class);
 
-        // 设置Mapper和Reducer类
+        // Set the Mapper and Reducer classes
         job.setMapperClass(JoinMapper.class);
         job.setReducerClass(JoinReducer.class);
         job.setMapOutputKeyClass(LongWritable.class);
         job.setMapOutputValueClass(Text.class);
 
 
-        // 设置输出键值对类
+        // Set the output key and value classes for the Mapper
         job.setOutputKeyClass(NullWritable.class);
         job.setOutputValueClass(Text.class);
 
@@ -41,7 +45,7 @@ public class FinalJoin {
         TextInputFormat.addInputPath(job, new Path(args[2]));
         TextInputFormat.addInputPath(job, new Path(args[3]));
 
-        // 设置输出路径
+        // Set the output path for the final output
         Path outputDir = new Path(args[4]);
         FileOutputFormat.setOutputPath(job, outputDir);
 

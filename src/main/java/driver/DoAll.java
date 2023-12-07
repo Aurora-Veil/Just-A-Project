@@ -15,10 +15,17 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import reducer.DoAllReducer;
 
 import java.io.IOException;
-
+/**
+ *Driver class for a Hadoop MapReduce job that appears to process stock market data.
+ *This driver class orchestrates the entire MapReduce job, defining input sources,
+ * mapping logic, reducing logic, output configurations, and then submitting the job for execution.
+ **/
 public class DoAll {
     public static void main(String[] args) throws IOException, InterruptedException, ClassNotFoundException {
+        // Create a Hadoop configuration
         Configuration conf = new Configuration();
+
+        // Create a new MapReduce job instance with a name
         Job job = Job.getInstance(conf, "Do step1 and step2");
 
         job.setJarByClass(DoAll.class);
@@ -30,14 +37,17 @@ public class DoAll {
 
         job.setReducerClass(DoAllReducer.class);
 
+        // Set the key and value classes for the mapper output
         job.setMapOutputKeyClass(Text.class);
         job.setMapOutputValueClass(Text.class);
 
+        // Set the key and value classes for the final output
         job.setOutputKeyClass(NullWritable.class);
         job.setOutputValueClass(Text.class);
 
         FileOutputFormat.setOutputPath(job, new Path(args[4]));
 
+        // Configure multiple named outputs using MultipleOutputs
         MultipleOutputs.addNamedOutput(job, "Cancel", TextOutputFormat.class, NullWritable.class, Text.class);
         MultipleOutputs.addNamedOutput(job, "LimitOrder", TextOutputFormat.class, NullWritable.class, Text.class);
         MultipleOutputs.addNamedOutput(job, "SpecOrder", TextOutputFormat.class, NullWritable.class, Text.class);

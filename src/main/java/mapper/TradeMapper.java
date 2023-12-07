@@ -10,7 +10,7 @@ import org.apache.hadoop.mapreduce.Mapper;
  * Mapper class for processing original trade data.
  * This class extracts relevant information and filters data based on the project final requests.
  * Input: <LongWritable, Text> - Input key-value pair.
- * Output: <LongWritable, Text> - Output key-value pair with time as the key and filtered trade records as the value.
+ * Output: <LongWritable, Text> - Output key-value pair with bidApplSeqNum or offerApplSeqNum as the key and filtered trade records as the value.
  */
 public class TradeMapper extends Mapper<LongWritable, Text, Text, Text> {
 
