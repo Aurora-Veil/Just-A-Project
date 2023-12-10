@@ -29,7 +29,7 @@ public class JoinMapper extends Mapper<LongWritable, Text, LongWritable, Text> {
      */
     @Override
     protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
-        String[] fields = value.toString().split("\t");
+        String[] fields = value.toString().split(",");
 
         String time = fields[0];
 

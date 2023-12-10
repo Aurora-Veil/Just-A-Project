@@ -37,7 +37,7 @@ public class JoinReducer extends Reducer<LongWritable, Text, NullWritable, Text>
 
         // Iterate through values and store in a list
         for (Text value : values) {
-            String[] fields = value.toString().split("\t");
+            String[] fields = value.toString().split(",");
             String sequenceNumber = fields[5];
             records.add(new DataRecord(sequenceNumber, value.toString()));
         }
