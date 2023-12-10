@@ -92,11 +92,11 @@ public class DoAllReducer extends Reducer<Text, Text, NullWritable, Text> {
             //市价单填入MARKET_ORDER_TYPE
             String[] fields = Market.split("\t");
             if (count == 0) {
-                outMarketValue.set(fields[1] + "\t" + fields[2] + "\t" + fields[3] + "\t" + fields[4] + "\t" +
-                        fields[5] + "\t" + fields[6] + "\t" + count + "\t" + "1");
+                outMarketValue.set(fields[1] + "," + fields[2] + "," + fields[3] + "," + fields[4] + "," +
+                        fields[5] + "," + fields[6] + "," + count + "," + "1");
             } else {
-                outMarketValue.set(fields[1] + "\t" + fields[2] + "\t" + fields[3] + "\t" + fields[4] + "\t" +
-                        fields[5] + "\t" + fields[6] + "\t" + count + "\t" + "2");
+                outMarketValue.set(fields[1] + "," + fields[2] + "," + fields[3] + "," + fields[4] + "," +
+                        fields[5] + "," + fields[6] + "," + count + "," + "2");
             }
             multipleOutputs.write("MarketOrder", NullWritable.get(), outMarketValue);
         }
@@ -114,26 +114,26 @@ public class DoAllReducer extends Reducer<Text, Text, NullWritable, Text> {
 
                 //限价单与撤单匹配，IsCancel= true，限价单CANCEL_TYPE为1，对应撤单的ORDER_TYPE为2
 
-                outOrderValue.set(limits[1] + "\t" + limits[2] + "\t" + limits[3] + "\t" + limits[4] + "\t" +
-                        limits[5] + "\t" + limits[6] + "\t" + limits[7] + "\t" + "1");
+                outOrderValue.set(limits[1] + "," + limits[2] + "," + limits[3] + "," + limits[4] + "," +
+                        limits[5] + "," + limits[6] + "," + limits[7] + "," + "1");
                 multipleOutputs.write("LimitOrder", NullWritable.get(), outOrderValue);
-                outCancelValue.set(cancels[1] + "\t" + "NULL" + "\t" + cancels[3] + "\t" + "NULL" + "\t" +
-                        "2" + "\t" + cancels[6] + "\t" + cancels[7] + "\t" + cancels[8]);
+                outCancelValue.set(cancels[1] + "," + "NULL" + "," + cancels[3] + "," + "NULL" + "," +
+                        "2" + "," + cancels[6] + "," + cancels[7] + "," + cancels[8]);
             } else if (IsSpec) {
 
                 //本方最优单与撤单匹配，IsCancel= true，限价单CANCEL_TYPE为1，对应撤单的ORDER_TYPE为U
 
-                outOrderValue.set(specs[1] + "\t" + specs[2] + "\t" + specs[3] + "\t" + specs[4] + "\t" +
-                        specs[5] + "\t" + specs[6] + "\t" + specs[7] + "\t" + "1");
+                outOrderValue.set(specs[1] + "," + specs[2] + "," + specs[3] + "," + specs[4] + "," +
+                        specs[5] + "," + specs[6] + "," + specs[7] + "," + "1");
                 multipleOutputs.write("SpecOrder", NullWritable.get(), outOrderValue);
-                outCancelValue.set(cancels[1] + "\t" + "NULL" + "\t" + cancels[3] + "\t" + "NULL" + "\t" +
-                        "U" + "\t" + cancels[6] + "\t" + cancels[7] + "\t" + cancels[8]);
+                outCancelValue.set(cancels[1] + "," + "NULL" + "," + cancels[3] + "," + "NULL" + "," +
+                        "U" + "," + cancels[6] + "," + cancels[7] + "," + cancels[8]);
             } else {
 
                 //市价单与撤单匹配，IsCancel= true，限价单CANCEL_TYPE为1，对应撤单的ORDER_TYPE为1
 
-                outCancelValue.set(cancels[1] + "\t" + "NULL" + "\t" + cancels[3] + "\t" + "NULL" + "\t" +
-                        "1" + "\t" + cancels[6] + "\t" + cancels[7] + "\t" + cancels[8]);
+                outCancelValue.set(cancels[1] + "," + "NULL" + "," + cancels[3] + "," + "NULL" + "," +
+                        "1" + "," + cancels[6] + "," + cancels[7] + "," + cancels[8]);
             }
             multipleOutputs.write("Cancel", NullWritable.get(), outCancelValue);
         } else {
@@ -141,15 +141,15 @@ public class DoAllReducer extends Reducer<Text, Text, NullWritable, Text> {
 
                 //限价单与撤单不匹配，IsCancel= false，限价单CANCEL_TYPE为 2，无对应撤单
 
-                outOrderValue.set(limits[1] + "\t" + limits[2] + "\t" + limits[3] + "\t" + limits[4] + "\t" +
-                        limits[5] + "\t" + limits[6] + "\t" + limits[7] + "\t" + "2");
+                outOrderValue.set(limits[1] + "," + limits[2] + "," + limits[3] + "," + limits[4] + "," +
+                        limits[5] + "," + limits[6] + "," + limits[7] + "," + "2");
                 multipleOutputs.write("LimitOrder", NullWritable.get(), outOrderValue);
             } else if (IsSpec) {
 
                 //限价单与撤单不匹配，IsCancel= false，限价单CANCEL_TYPE为 2，无对应撤单
 
-                outOrderValue.set(specs[1] + "\t" + specs[2] + "\t" + specs[3] + "\t" + specs[4] + "\t" +
-                        specs[5] + "\t" + specs[6] + "\t" + specs[7] + "\t" + "2");
+                outOrderValue.set(specs[1] + "," + specs[2] + "," + specs[3] + "," + specs[4] + "," +
+                        specs[5] + "," + specs[6] + "," + specs[7] + "," + "2");
                 multipleOutputs.write("SpecOrder", NullWritable.get(), outOrderValue);
             }
         }
