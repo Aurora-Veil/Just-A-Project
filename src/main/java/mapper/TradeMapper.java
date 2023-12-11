@@ -33,13 +33,23 @@ public class TradeMapper extends Mapper<LongWritable, Text, Text, Text> {
 
         // Extract relevant fields from the records
         String securityID = fields[8];
-        String tradeTime = fields[15];
+        String time = fields[15];
         String bidApplSeqNum = fields[10];
         String offerApplSeqNum = fields[11];
         String cancelType = fields[14].equals("4")? "1": "2";
 
+        String changeTime = String.format("%s-%s-%s %s:%s:%s.%s000",
+                time.substring(0, 4),   // 年
+                time.substring(4, 6),   // 月
+                time.substring(6, 8),   // 日
+                time.substring(8, 10),  // 时
+                time.substring(10, 12), // 分
+                time.substring(12, 14), // 秒
+                time.substring(14)      // 毫秒
+        );
+
         // Check if the stock ID is "000001" and the time is during continuous trading
-        if (isContinuousAuctionTime(tradeTime) && "000001".equals(securityID)){
+        if (isContinuousAuctionTime(time) && "000001".equals(securityID)){
             /*
              Prepare the trade record based on the bidApplSeqNum and offerApplSeqNum
              Records' order are transformed into the final output's format
@@ -57,28 +67,28 @@ public class TradeMapper extends Mapper<LongWritable, Text, Text, Text> {
              */
             if (!bidApplSeqNum.equals("0") && !offerApplSeqNum.equals("0")){
                 outputKey.set(bidApplSeqNum);
-                String record = "Trade" + "\t" + fields[15] + "\t" + fields[12] + "\t" + fields[13] + "\t" +
-                        "1" + "\t" + "NULL" + "\t" + bidApplSeqNum + "\t" + "NULL" + "\t" + cancelType;
+                String record = "Trade" + "," + changeTime + "," + fields[12] + "," + fields[13] + "," +
+                        "1" + "," + "NULL" + "," + bidApplSeqNum + "," + "NULL" + "," + cancelType;
                 outputValue.set(record);
                 context.write(outputKey,outputValue);
 
                 outputKey.set(offerApplSeqNum);
-                String anotherRecord = "Trade" + "\t" + fields[15] + "\t" + fields[12] + "\t" + fields[13] + "\t" +
-                        "2" + "\t" + "NULL" + "\t" + offerApplSeqNum + "\t" + "NULL" + "\t" + cancelType;
+                String anotherRecord = "Trade" + "," + changeTime + "," + fields[12] + "," + fields[13] + "," +
+                        "2" + "," + "NULL" + "," + offerApplSeqNum + "," + "NULL" + "," + cancelType;
                 outputValue.set(anotherRecord);
                 context.write(outputKey,outputValue);
             } else {
                 String record;
                 if (offerApplSeqNum.equals("0")){
                     outputKey.set(bidApplSeqNum);
-                    record = "Cancel" + "\t" + fields[15] + "\t" + "NULL" + "\t" + fields[13] + "\t" +
-                            "NULL" + "\t" + "NULL" + "\t" + bidApplSeqNum + "\t" + "NULL" + "\t" + cancelType;
+                    record = "Cancel" + "," + changeTime + "," + "NULL" + "," + fields[13] + "," +
+                            "1" + "," + "0" + "," + bidApplSeqNum + "," + "NULL" + "," + cancelType;
                     outputValue.set(record);
                     context.write(outputKey,outputValue);
                 } else {
                     outputKey.set(offerApplSeqNum);
-                    record = "Cancel" + "\t" + fields[15] + "\t" + "NULL" + "\t" + fields[13] + "\t" +
-                            "NULL" + "\t" + "NULL" + "\t" + offerApplSeqNum + "\t" + "NULL" + "\t" + cancelType;
+                    record = "Cancel" + "," + changeTime + "," + "NULL" + "," + fields[13] + "," +
+                            "2" + "," + "0" + "," + offerApplSeqNum + "," + "NULL" + "," + cancelType;
                     outputValue.set(record);
                     context.write(outputKey,outputValue);
                 }
