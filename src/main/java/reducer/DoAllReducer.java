@@ -15,7 +15,6 @@ import java.util.Set;
  * Input: <Text, Text> - Input key-value pair.
  * Output: <NullWritable, Text> - Output key-value pair with NULL key and filtered trade records as the value.
  */
-
 public class DoAllReducer extends Reducer<Text, Text, NullWritable, Text> {
 
     private MultipleOutputs<NullWritable, Text> multipleOutputs;
@@ -36,8 +35,8 @@ public class DoAllReducer extends Reducer<Text, Text, NullWritable, Text> {
     @Override
     protected void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
         /*
-        These boolean variables ("IsCancel", "IsLimit", "IsSpec", "IsMarket")are used to track the presence of specific types of orders within the values associated with the key.
-        The "distinctNumbers" is a "Set" used to keep track of distinct prices for Trade orders.
+         These boolean variables ("IsCancel", "IsLimit", "IsSpec", "IsMarket")are used to track the presence of specific types of orders within the values associated with the key.
+         The "distinctNumbers" is a "Set" used to keep track of distinct prices for Trade orders.
          */
         boolean IsCancel = false;
         boolean IsLimit = false;
@@ -51,8 +50,8 @@ public class DoAllReducer extends Reducer<Text, Text, NullWritable, Text> {
         String Market = "";
 
         /*
-        This loop iterates over the values associated with the key, examines the type of order, and updates the corresponding variables accordingly.
-        For Trade orders, it extracts the price and adds it to the set of distinct numbers.
+         This loop iterates over the values associated with the key, examines the type of order, and updates the corresponding variables accordingly.
+         For Trade orders, it extracts the price and adds it to the set of distinct numbers.
          */
         for (Text value : values) {
             String Title = value.toString().split(",")[0];
@@ -83,11 +82,11 @@ public class DoAllReducer extends Reducer<Text, Text, NullWritable, Text> {
         }
 
         /*
-        These conditional blocks check whether specific types of orders are present and perform corresponding processing.
+         These conditional blocks check whether specific types of orders are present and perform corresponding processing.
             If there is a Market order,"CANCEL_TYPE" is 2, it extracts relevant fields, counts distinct "MARKET_ORDER_TYPE", and writes the output to the "MarketOrder" output.
             If there is a cancel order, it extracts relevant fields,and writes the output to the "Cancel" output.
             If there is a Limit order, it extracts relevant fields,and writes the output to the "LimitOrder" output.
-            If there is a Spec order, it extracts relevant fields,and writes the output to the "LimitOrder" output.
+            If there is a Spec order, it extracts relevant fields,and writes the output to the "SpecOrder" output.
         */
         if (IsMarket) {
             String[] fields = Market.split(",");
@@ -114,13 +113,17 @@ public class DoAllReducer extends Reducer<Text, Text, NullWritable, Text> {
 
     }
 
-    //In the setup method, a MultipleOutputs object (multipleOutputs) is created and initialized.
+    /**
+     * In the setup method, a MultipleOutputs object (multipleOutputs) is created and initialized.
+     */
     @Override
     protected void setup(Context context) {
         multipleOutputs = new MultipleOutputs<>(context);
     }
 
-    //The cleanup method of the Reducer is responsible for closing the MultipleOutputs object.
+    /**
+     * The cleanup method of the Reducer is responsible for closing the MultipleOutputs object.
+     */
     @Override
     protected void cleanup(Context context) throws IOException, InterruptedException {
         multipleOutputs.close();

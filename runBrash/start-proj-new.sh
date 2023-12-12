@@ -6,7 +6,7 @@ hadoop jar Project.jar driver.DoAll data/am_hq_order_spot.txt data/pm_hq_order_s
 
 hadoop jar Project.jar driver.FinalJoin MiddleOutput/part-r-00000 MiddleOutput/LimitOrder-r-00000 MiddleOutput/Cancel-r-00000 MiddleOutput/MarketOrder-r-00000 FinalOutput
 
-hdfs dfs -mv FinalOutput/part-r-00000 Output.txt
+hdfs dfs -mv FinalOutput/part-r-00000 Output.csv
 
 end_time=$(date +%s)
 

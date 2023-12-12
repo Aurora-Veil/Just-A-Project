@@ -15,6 +15,7 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import reducer.DoAllReducer;
 
 import java.io.IOException;
+
 /**
  *Driver class for a Hadoop MapReduce job that appears to process stock market data.
  *This driver class orchestrates the entire MapReduce job, defining input sources,

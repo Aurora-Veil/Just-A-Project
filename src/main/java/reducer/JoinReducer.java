@@ -63,7 +63,9 @@ public class JoinReducer extends Reducer<LongWritable, Text, NullWritable, Text>
             return data;
         }
 
-        //The compareTo method compares based on the sequenceNumber field in ascending order.
+        /**
+         * The compareTo method compares based on the sequenceNumber field in ascending order.
+         */
         @Override
         public int compareTo(DataRecord other) {
             return Integer.compare(Integer.parseInt(this.sequenceNumber), Integer.parseInt(other.sequenceNumber));
