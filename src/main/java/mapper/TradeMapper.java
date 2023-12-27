@@ -38,18 +38,18 @@ public class TradeMapper extends Mapper<LongWritable, Text, Text, Text> {
         String offerApplSeqNum = fields[11];
         String cancelType = fields[14].equals("4")? "1": "2";
 
-        String changeTime = String.format("%s-%s-%s %s:%s:%s.%s000",
-                time.substring(0, 4),   // 年
-                time.substring(4, 6),   // 月
-                time.substring(6, 8),   // 日
-                time.substring(8, 10),  // 时
-                time.substring(10, 12), // 分
-                time.substring(12, 14), // 秒
-                time.substring(14)      // 毫秒
-        );
-
         // Check if the stock ID is "000001" and the time is during continuous trading
         if (isContinuousAuctionTime(time) && "000001".equals(securityID)){
+
+            String changeTime = String.format("%s-%s-%s %s:%s:%s.%s000",
+                    time.substring(0, 4),   // 年
+                    time.substring(4, 6),   // 月
+                    time.substring(6, 8),   // 日
+                    time.substring(8, 10),  // 时
+                    time.substring(10, 12), // 分
+                    time.substring(12, 14), // 秒
+                    time.substring(14)      // 毫秒
+            );
             /*
              Prepare the trade record based on the bidApplSeqNum and offerApplSeqNum
              Records' order are transformed into the final output's format

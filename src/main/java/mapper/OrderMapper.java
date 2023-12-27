@@ -38,20 +38,20 @@ public class OrderMapper extends Mapper<LongWritable, Text, Text, Text> {
         String time = records[12];
         String orderType = records[14];
 
-        String changeTime = String.format("%s-%s-%s %s:%s:%s.%s000",
-                time.substring(0, 4),   // year
-                time.substring(4, 6),   // month
-                time.substring(6, 8),   // day
-                time.substring(8, 10),  // hour
-                time.substring(10, 12), // minute
-                time.substring(12, 14), // seconds
-                time.substring(14)      // millisecond
-        );
-
         // Check if the stock ID is "000001" and the time is during continuous trading
         if (id.equals("000001") && isInContinuousTrading(time)){
             // Extract the time in hours for grouping
             outputKey.set(applSeqNum);
+
+            String changeTime = String.format("%s-%s-%s %s:%s:%s.%s000",
+                    time.substring(0, 4),   // year
+                    time.substring(4, 6),   // month
+                    time.substring(6, 8),   // day
+                    time.substring(8, 10),  // hour
+                    time.substring(10, 12), // minute
+                    time.substring(12, 14), // seconds
+                    time.substring(14)      // millisecond
+            );
 
             /*
              Prepare the order record based on the order type
