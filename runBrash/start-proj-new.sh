@@ -8,6 +8,10 @@ hadoop jar Project.jar driver.FinalJoin MiddleOutput/part-r-00000 MiddleOutput/L
 
 hdfs dfs -mv FinalOutput/part-r-00000 you.csv
 
+hdfs dfs -cat header.csv you.csv > temp.csv
+
+hdfs dfs -mv temp.csv you.csv
+
 end_time=$(date +%s)
 
 execution_time=$((end_time - start_time))
