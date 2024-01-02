@@ -38,6 +38,7 @@ public class JoinReducer extends Reducer<LongWritable, Text, NullWritable, Text>
             records.add(new DataRecord(sequenceNumber, value.toString()));
         }
 
+        // sort the records by  applSeqNum
         Collections.sort(records);
 
         for (DataRecord record : records) {
