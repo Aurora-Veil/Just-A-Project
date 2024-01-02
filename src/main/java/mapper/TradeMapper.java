@@ -10,7 +10,7 @@ import org.apache.hadoop.mapreduce.Mapper;
  * Mapper class for processing original trade data.
  * This class extracts relevant information and filters data based on the project final requests.
  * Input: <LongWritable, Text> - Input key-value pair.
- * Output: <LongWritable, Text> - Output key-value pair with bidApplSeqNum or offerApplSeqNum as the key and filtered trade records as the value.
+ * Output: <Text, Text> - Output key-value pair with bidApplSeqNum or offerApplSeqNum as the key and filtered trade records as the value.
  */
 public class TradeMapper extends Mapper<LongWritable, Text, Text, Text> {
 
@@ -42,13 +42,13 @@ public class TradeMapper extends Mapper<LongWritable, Text, Text, Text> {
         if (isContinuousAuctionTime(time) && "000001".equals(securityID)){
 
             String changeTime = String.format("%s-%s-%s %s:%s:%s.%s000",
-                    time.substring(0, 4),   // 年
-                    time.substring(4, 6),   // 月
-                    time.substring(6, 8),   // 日
-                    time.substring(8, 10),  // 时
-                    time.substring(10, 12), // 分
-                    time.substring(12, 14), // 秒
-                    time.substring(14)      // 毫秒
+                    time.substring(0, 4),   // year
+                    time.substring(4, 6),   // month
+                    time.substring(6, 8),   // day
+                    time.substring(8, 10),  // hour
+                    time.substring(10, 12), // minute
+                    time.substring(12, 14), // second
+                    time.substring(14)      // millisecond
             );
             /*
              Prepare the trade record based on the bidApplSeqNum and offerApplSeqNum

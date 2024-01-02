@@ -10,7 +10,7 @@ import java.io.IOException;
  * Mapper class for processing original trade data.
  * This class extracts relevant information and filters data based on the project final requests.
  * Input: <LongWritable, Text> - Input key-value pair.
- * Output: <LongWritable, Text> - Output key-value pair, time as the key and filtered trade records as the value.
+ * Output: <LongWritable, Text> - Output key-value pair, time as the key and records as the value.
  */
 
 public class JoinMapper extends Mapper<LongWritable, Text, LongWritable, Text> {
@@ -31,10 +31,11 @@ public class JoinMapper extends Mapper<LongWritable, Text, LongWritable, Text> {
     protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
         String[] fields = value.toString().split(",");
 
+        // select the time
         String time = fields[0];
 
+        // choose hour + minute + second + first 3 millisecond for time key as a long
         String timeValues = time.substring(11, 13) + time.substring(14, 16) + time.substring(17, 19) + time.substring(20, 23);
-
         long timePerHour = Long.parseLong(timeValues);
 
         outKey.set(timePerHour);

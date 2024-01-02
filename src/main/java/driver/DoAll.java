@@ -17,9 +17,9 @@ import reducer.DoAllReducer;
 import java.io.IOException;
 
 /**
- *Driver class for a Hadoop MapReduce job that appears to process stock market data.
- *This driver class orchestrates the entire MapReduce job, defining input sources,
- * mapping logic, reducing logic, output configurations, and then submitting the job for execution.
+ * Driver class for a Hadoop MapReduce job that appears to process stock market data.
+ * This driver class orchestrates the entire MapReduce job, defining input sources,
+ * Filtering th original records and completing the required field in Market Order.
  **/
 public class DoAll {
     public static void main(String[] args) throws IOException, InterruptedException, ClassNotFoundException {

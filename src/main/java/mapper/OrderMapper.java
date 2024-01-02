@@ -10,7 +10,7 @@ import java.io.IOException;
  * Mapper class for processing original order data.
  * This class extracts relevant information and filters data based on the project final requests.
  * Input: <LongWritable, Text> - Input key-value pair.
- * Output: <LongWritable, Text> - Output key-value pair with applSeqNum as the key and filtered order records as the value.
+ * Output: <Text, Text> - Output key-value pair with applSeqNum as the key and filtered order records as the value.
  */
 public class OrderMapper extends Mapper<LongWritable, Text, Text, Text> {
     private Text outputKey = new Text();

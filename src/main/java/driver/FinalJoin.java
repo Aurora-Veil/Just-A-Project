@@ -16,7 +16,8 @@ import java.io.*;
 
 /**
  * This class is the driver program for the final join MapReduce job. It combines data from multiple input sources
- * using a custom mapper and reducer to produce a consolidated output.
+ * Using a custom mapper and reducer to produce a consolidated output.
+ * Aim is to do the sorting of records.
  */
 public class FinalJoin {
     public static void main(String[] args) throws IOException, InterruptedException, ClassNotFoundException {
